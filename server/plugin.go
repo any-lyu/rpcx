@@ -39,6 +39,8 @@ type PluginContainer interface {
 	DoHeartbeatRequest(ctx context.Context, req *protocol.Message) error
 
 	MuxMatch(m cmux.CMux)
+
+	Interceptor(ctx context.Context, req interface{}) (context.Context, DoCallback)
 }
 
 // Plugin is the server plugin interface.
@@ -118,6 +120,10 @@ type (
 
 	CMuxPlugin interface {
 		MuxMatch(m cmux.CMux)
+	}
+
+	InterceptorPlugin interface {
+		Interceptor(ctx context.Context, req interface{}) (context.Context, DoCallback)
 	}
 )
 
@@ -384,3 +390,16 @@ func (p *pluginContainer) MuxMatch(m cmux.CMux) {
 		}
 	}
 }
+
+// 	Interceptor add interceptor
+func (p *pluginContainer) Interceptor(ctx context.Context, req interface{}) (context.Context, DoCallback) {
+	for i := range p.plugins {
+		if plugin, ok := p.plugins[i].(InterceptorPlugin); ok {
+			return plugin.Interceptor(ctx, req)
+		}
+	}
+	return ctx, nil
+}
+
+// DoCallback finish call callback
+type DoCallback func(reply interface{})
