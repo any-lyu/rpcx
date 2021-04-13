@@ -40,7 +40,7 @@ type PluginContainer interface {
 
 	MuxMatch(m cmux.CMux)
 
-	Interceptor(ctx context.Context, req interface{}) (context.Context, DoCallback)
+	Interceptor(ctx context.Context, serviceName, methodName string, req interface{}) (context.Context, DoCallback)
 }
 
 // Plugin is the server plugin interface.
@@ -123,7 +123,7 @@ type (
 	}
 
 	InterceptorPlugin interface {
-		Interceptor(ctx context.Context, req interface{}) (context.Context, DoCallback)
+		Interceptor(ctx context.Context, serviceName, methodName string, req interface{}) (context.Context, DoCallback)
 	}
 )
 
@@ -392,10 +392,10 @@ func (p *pluginContainer) MuxMatch(m cmux.CMux) {
 }
 
 // 	Interceptor add interceptor
-func (p *pluginContainer) Interceptor(ctx context.Context, req interface{}) (context.Context, DoCallback) {
+func (p *pluginContainer) Interceptor(ctx context.Context, serviceName, methodName string, req interface{}) (context.Context, DoCallback) {
 	for i := range p.plugins {
 		if plugin, ok := p.plugins[i].(InterceptorPlugin); ok {
-			return plugin.Interceptor(ctx, req)
+			return plugin.Interceptor(ctx, serviceName, methodName, req)
 		}
 	}
 	return ctx, nil

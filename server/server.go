@@ -625,7 +625,7 @@ func (s *Server) handleRequest(ctx context.Context, req *protocol.Message) (res 
 		return handleError(res, err)
 	}
 
-	ctx, doCallback := s.Plugins.Interceptor(ctx, req)
+	ctx, doCallback := s.Plugins.Interceptor(ctx, serviceName, methodName, argv)
 
 	if mtype.ArgType.Kind() != reflect.Ptr {
 		err = service.call(ctx, mtype, reflect.ValueOf(argv).Elem(), reflect.ValueOf(replyv))
