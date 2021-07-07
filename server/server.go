@@ -633,10 +633,11 @@ func (s *Server) handleRequest(ctx context.Context, req *protocol.Message) (res 
 		err = service.call(ctx, mtype, reflect.ValueOf(argv), reflect.ValueOf(replyv))
 	}
 
+	if doCallback != nil {
+		doCallback(replyv)
+	}
+
 	if err == nil {
-		if doCallback != nil {
-			doCallback(replyv)
-		}
 		replyv, err = s.Plugins.DoPostCall(ctx, serviceName, methodName, argv, replyv)
 	}
 
