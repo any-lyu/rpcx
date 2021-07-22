@@ -634,7 +634,7 @@ func (s *Server) handleRequest(ctx context.Context, req *protocol.Message) (res 
 	}
 
 	if doCallback != nil {
-		doCallback(replyv)
+		doCallback(replyv, err)
 	}
 
 	if err == nil {
