@@ -402,4 +402,4 @@ func (p *pluginContainer) Interceptor(ctx context.Context, serviceName, methodNa
 }
 
 // DoCallback finish call callback
-type DoCallback func(reply interface{})
+type DoCallback func(reply interface{},err error)
